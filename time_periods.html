@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U.S. Foreign Aid Analysis</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm",
+                "d3-fetch": "https://cdn.jsdelivr.net/npm/d3-fetch@3.0.1/+esm"
+            }
+        }
+        </script>
+    <link rel="stylesheet" href="styles.css">
+    </style>
+</head>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<body>
+    <header>
+        <h1>USAID: Evaluating the Need for Reevaluation</h1>
+        <h2>Journey Through Time</h2>
+        <nav>
+            <a href="index.html">Back to Home</a>
+            <a href="regions.html">Regional Analysis</a>
+            <a href="conclusion.html">Conclusion</a>
+        </nav>
+    </header>
+</header>
+
+<main>
+    <section>
+        <h2></h2>
+        <p>This webpage explores the evolving landscape of U.S. foreign aid, examining how resources have been allocated to various regions around the world over time. By delving into datasets made publicly available by the U.S. government, we can trace the shifts in funding priorities, uncovering how political, economic, and global events have influenced the distribution of aid. From the early years of aid allocation to post-Cold War developments, to the current strategic focus on global security, infrastructure, and climate resilience, this investigation highlights the broader trends and underlying factors shaping U.S. foreign policy. The accompanying visualizations offer a closer look at these trends, allowing users to explore the data in more depth and better understand the shifting priorities and impacts of U.S. foreign aid.</p>
+    </section>
+</main>
+
+
+<main>
+    <section>
+        <h2>Visualizations</h2>
+        <div class="visualization-container">
+            <!-- First Row: D3 Visualization -->
+            <div class="visualization-row">
+                <div class="chart" id="d3-chart-container">
+                    <div id="tooltip" style="position: absolute; opacity: 0; background: #fff; padding: 5px; border: 1px solid #000; pointer-events: none;"></div>
+                    <div id="controls" style="position: absolute; top: 10px; left: 10px; z-index: 10;">
+                        <select id="regionSelect" style="padding: 5px; margin-right: 10px;">
+                            <option value="MENA">Middle East and North Africa</option>
+                            <option value="SubSaharan">Sub-Saharan Africa</option>
+                        </select>
+                        
+                        <select id="timeFrame" style="padding: 5px;">
+                            <option value="2000-2010">2000-2010</option>
+                            <option value="2010-2020">2010-2020</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-description">
+                    <p>This interactive D3 visualization shows trends in US foreign aid allocation to Middle East/North Africa and Sub-Saharan Africa regions over time. Use the dropdown menus at the top left to filter by region and time period. The logarithmic scale helps compare aid amounts across different orders of magnitude.</p>
+                </div>
+            </div>
+
+            <!-- Second Row: Iframe Visualization -->
+            <div class="visualization-row">
+                <div class="chart" id="viz1">
+                    <iframe src="MENAscatter.html" width="100%" height="100%"></iframe>
+                </div>
+                <div class="chart-description">
+                    <p>This interactive visualization reveals trends in US foreign aid allocation to three key regions (East Asia & Oceania, Europe & Eurasia, and South & Central Asia) over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+    <!-- Include the D3 Visualization Script -->
+    <script>
+        // JavaScript for D3 Visualization
+        d3.csv('us_foreign_aid_country.csv').then(function(data) {
+            // Clean data
+            data.forEach(function(d) {
+                d.Fiscal_Year = +d['Fiscal Year'];
+                d.current_amount = +d['current_amount'];
+            });
+
+            // Remove invalid data
+            data = data.filter(function(d) {
+                return d.Fiscal_Year > 0 && d.current_amount > 0;
+            });
+
+            // Set up chart dimensions
+            var margin = { top: 50, right: 30, bottom: 50, left: 60 },
+                width = document.querySelector('#d3-chart-container').clientWidth - margin.left - margin.right,
+                height = document.querySelector('#d3-chart-container').clientHeight - margin.top - margin.bottom;
+
+            // Create SVG
+            var svg = d3.select("#d3-chart-container")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            // Set up scales
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.scaleLog().range([height, 0]);
+
+            // Create axes
+            var xAxis = svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")");
+            
+            var yAxis = svg.append("g")
+                .attr("class", "y axis");
+
+            // Tooltip
+            var tooltip = d3.select("#tooltip");
+
+            // Update chart function
+            function updateChart() {
+                var selectedRegion = d3.select("#regionSelect").property("value");
+                var selectedTimeFrame = d3.select("#timeFrame").property("value");
+
+                // Filter data
+                var filteredData = data.filter(function(d) {
+                    var regionMatch = selectedRegion === 'MENA' ? 
+                        d['Region Name'] === 'Middle East and North Africa' : 
+                        d['Region Name'] === 'Sub-Saharan Africa';
+                    
+                    var yearMatch = selectedTimeFrame === '2000-2010' ? 
+                        d.Fiscal_Year >= 2000 && d.Fiscal_Year <= 2010 : 
+                        d.Fiscal_Year >= 2010 && d.Fiscal_Year <= 2020;
+                    
+                    return regionMatch && yearMatch;
+                });
+
+                // Update scales
+                x.domain(d3.extent(filteredData, function(d) { return d.Fiscal_Year; }));
+                y.domain(d3.extent(filteredData, function(d) { return d.current_amount; }));
+
+                // Update axes
+                xAxis.transition().duration(500).call(d3.axisBottom(x).tickFormat(d3.format("d")));
+                yAxis.transition().duration(500).call(d3.axisLeft(y));
+
+                // Bind data
+                var circles = svg.selectAll("circle").data(filteredData);
+
+                // Remove old points
+                circles.exit().remove();
+
+                // Add new points
+                circles.enter()
+                    .append("circle")
+                    .attr("r", 5)
+                    .style("fill", "#FF6347")
+                    .style("opacity", 0.7)
+                    .on("mouseover", function(event, d) {
+                        d3.select(this).style("fill", "red");
+                        tooltip.html(`${d['Region Name']}<br>${d.Fiscal_Year}: $${d.current_amount.toLocaleString()}`)
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 28) + "px")
+                            .style("opacity", 1);
+                    })
+                    .on("mouseout", function() {
+                        d3.select(this).style("fill", "#FF6347");
+                        tooltip.style("opacity", 0);
+                    })
+                    .merge(circles)
+                    .transition().duration(500)
+                    .attr("cx", function(d) { return x(d.Fiscal_Year); })
+                    .attr("cy", function(d) { return y(d.current_amount); });
+
+                // Add axis labels
+                svg.select(".x.axis-label").remove();
+                svg.select(".y.axis-label").remove();
+                
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("x", width / 2)
+                    .attr("y", height + margin.bottom - 10)
+                    .style("text-anchor", "middle")
+                    .text("Fiscal Year");
+                
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", -margin.left + 15)
+                    .attr("x", -height / 2)
+                    .style("text-anchor", "middle")
+                    .text("Aid Amount (USD)");
+            }
+
+            // Initial render
+            updateChart();
+
+            // Event listeners
+            d3.select("#regionSelect").on("change", updateChart);
+            d3.select("#timeFrame").on("change", updateChart);
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                width = document.querySelector('#d3-chart-container').clientWidth - margin.left - margin.right;
+                height = document.querySelector('#d3-chart-container').clientHeight - margin.top - margin.bottom;
+                
+                svg.attr("width", width + margin.left + margin.right)
+                   .attr("height", height + margin.top + margin.bottom);
+                
+                x.range([0, width]);
+                y.range([height, 0]);
+                
+                updateChart();
+            });
+        }).catch(function(error) {
+            console.error("Error loading the CSV file:", error);
+            d3.select("#d3-chart-container")
+                .append("div")
+                .style("color", "red")
+                .text("Error loading data. Please check console for details.");
+        });
+    </script>
+</body>
+</html>
+</script>
+</body>
+</html>
