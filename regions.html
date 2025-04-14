@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U.S. Foreign Aid Analysis</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.5/+esm",
+                "d3-fetch": "https://cdn.jsdelivr.net/npm/d3-fetch@3.0.1/+esm"
+            }
+        }
+        </script>
+    <link rel="stylesheet" href="styles.css">
+    </style>
+</head>
+
+<!-- <script src="https://d3js.org/d3.v7.min.js"></script> -->
+
+<body>
+    <header>
+        <h1>USAID: Evaluating the Need for Reevaluation</h1>
+        <h2>Regional Analysis</h2>
+        <nav>
+            <a href="index.html">Back to Home</a>
+            <a href="time_periods.html">Journey Through Time</a>
+            <a href="conclusion.html">Conclusion</a>
+        </nav>
+    </header>
+</header>
+
+<main>
+    <section>
+        <h2></h2>
+        <p>This webpage explores the evolving landscape of U.S. foreign aid, examining how resources have been allocated to various regions around the world over time. By delving into datasets made publicly available by the U.S. government, we can trace the shifts in funding priorities, uncovering how political, economic, and global events have influenced the distribution of aid. From the early years of aid allocation to post-Cold War developments, to the current strategic focus on global security, infrastructure, and climate resilience, this investigation highlights the broader trends and underlying factors shaping U.S. foreign policy. The accompanying visualizations offer a closer look at these trends, allowing users to explore the data in more depth and better understand the shifting priorities and impacts of U.S. foreign aid.</p>
+    </section>
+
+    <section>
+        <h2>Visualizations</h2>
+        <div class="visualization-container">
+            <div class="chart" id="viz1">
+                <iframe src="USAID Over Time by Region (interactive).html" width="100%" height="600"></iframe>
+            </div>
+            <div class="chart-description">
+                <p>This interactive visualization reveals trends in US foreign aid allocation to three key regions (East Asia & Oceania, Europe & Eurasia, and South & Central Asia) over time. The logarithmic y-axis allows comparison of aid amounts across different orders of magnitude, while the interactive selection highlights one region at a time for clearer analysis. Key takeaways include the significant increase in aid to Europe/Eurasia post-1990, the steady support for South/Central Asia since 2001, and the relative consistency of aid to East Asia/Oceania. However, in recent years, there is a significant decrease in aid for the South/Central Asia Region and East Asia/Oceania. Users can click the radio buttons to focus on specific regional trends. </body>
+                 </div>
+            <div class="chart" id="viz2">
+                <iframe src="foreign_aid_sector_chart.html" width="50%" height="600"></iframe>
+            </div>
+            <div class="chart-description">
+                <p> The data reveals significant shifts in both regional allocation and sectoral focus of U.S. foreign aid between 2014 and 2025. In 2014, the largest portion of aid went to South & Central Asia, likely supporting health initiatives and infrastructure development, followed by Europe & Eurasia where governance programs and economic reforms were probable priorities. By 2025, Europe & Eurasia emerged as the primary recipient, suggesting increased funding for security assistance and energy sector development, while South & Central Asia saw relative reductions. The aid expansion to $9 billion indicates broader sectoral investments, potentially encompassing education, climate resilience, and technology partnerships across all regions. </body>
+                 </div>
+            
+        </div>
+    </section>
+</main>
+</body>
+</html>

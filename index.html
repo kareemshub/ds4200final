@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U.S. Foreign Aid Analysis</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>USAID: Evaluating the Need for Reevaluation</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="regions.html">Regional Analysis</a>
+            <a href="time_periods.html">Journey Through Time</a>
+            <a href="conclusion.html">Conclusion</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Trump's Plan for Reevaluation</h2>
+            <p>Since taking public office, the Trump administration has wasted no time in making major changes to decades-old foreign and domestic policy, one of which included halting all foreign aid until further notice. This project aims to assess the necessity and implications of this decision. The United States has historically been one of the largest contributors to foreign aid globally, providing financial assistance for humanitarian efforts, economic development, and geopolitical stability.</p>
+            <p>By analyzing the U.S. government’s publicly available foreign income dataset, this research will explore historical trends in foreign aid allocation across different regions, funding groups, and time periods. Foreign aid plays a crucial role in diplomacy, disaster relief, and economic growth in developing nations. However, recent political shifts have raised questions about its sustainability and strategic importance.</p>
+            <p>This study will also examine how U.S. foreign aid spending compares to other government expenditures, evaluating whether the recent cuts were financially justified or politically motivated. Through visual data analysis, we aim to present a comprehensive picture of how aid reductions impact recipient countries and international relations.</p>
+        </section>
+        <section>
+            <h2>What aid are we administering?</h2>
+            <p>The dataset for this project is published by the U.S. Office of Foreign Assistance and provides comprehensive data on U.S. foreign aid allocations, including recipient countries, managing agencies, funding accounts, aid objectives, and transaction types. The most recent update to the dataset was in December 2024, ensuring that our analysis is based on the latest available data.</p>
+            <p>The U.S. Agency for International Development (USAID), which manages much of the country’s foreign aid, plays a central role in global development efforts. Established in 1961, USAID’s mission is to promote international stability, reduce poverty, and advance humanitarian assistance. It oversees aid distribution to support economic growth, democracy, and disaster relief initiatives worldwide.</p>
+            <p>The dataset tracks financial commitments and disbursements over multiple years, allowing for a detailed analysis of historical trends in U.S. foreign assistance. It includes information on recipient countries, aid categories, and project types, offering insights into how aid priorities have shifted over time. This study will assess how the U.S. government's role in global development has evolved, particularly in light of recent policy changes.</p>
+        </section>
+        <section>
+            <h2>USAID over time and by group (aid justification) and location (country) </h2>
+            <div class="visualization-container">
+                <div class="chart" id="viz1">
+                    <iframe src="interactive_map.html" width="100%" height="600"></iframe>
+                </div>
+                <div class="chart-description">
+                    <p>The chart to the right is a choropleth map visualizes the total amount of funding received by each country from the United States since 1946, making it easy to quickly identify nations that have received significant U.S. aid. By hovering over any country, users can view the exact dollar amount of aid allocated to that nation, along with the top funding purpose for that period. The interactive map also includes a set of tools at the top right of the display, allowing for zoom control, lasso selection, and navigation through mouse movement. Users can zoom in and out using their mouse scroll wheel and drag the map with their mouse or trackpad to explore different regions. In the following sections of the webpage, we will dive deeper into specific regions and areas of the world, providing further analysis of the trends and implications of U.S. foreign aid. </body>
+                     </div>
+                <div class="chart" id="viz2">
+                    <iframe src="Total USAID by Year (interactive line).html" width="100%" height="600"></iframe>
+                </div>
+                <div class="chart-description">
+                    <p> The bar chart displays the total global aid administered by the United States each year since 1946, offering a clear view of key moments in U.S. foreign aid policy history. This visualization allows users to easily identify significant shifts or trends in aid distribution, helping to highlight the impact of various political administrations. The chart is interactive, enabling users to define the year range they wish to explore, allowing for comparisons of aid levels across different political eras or at specific historical junctures. By adjusting the time range, users can gain insights into how global aid priorities have evolved in response to changing political, economic, and humanitarian contexts. In addition, we will be investigating specific time periods in more detail in later sections of the webpage, providing a deeper analysis of the factors that influenced U.S. foreign aid during those years. </body>
+                     </div>
+                
+            </div>
+        </section>
+    </main>
+</body>
+</html>
