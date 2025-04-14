@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>U.S. Foreign Aid Analysis</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+
+
+    .visualization-container {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .visualization-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .chart {
+      flex: 1;
+      min-width: 400px;
+      height: 500px;
+    }
+
+    .chart-description {
+      flex: 1;
+      min-width: 300px;
+      max-width: 500px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      color: #444;
+    }
+
+    .tooltip {
+      position: absolute;
+      text-align: center;
+      padding: 5px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border-radius: 3px;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    #dropdown-controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 5px;
+      margin: 0 10px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>USAID: Evaluating the Need for Reevaluation</h1>
+    <h2>Journey Through Time</h2>
+    <nav>
+      <a href="index.html">Back to Home</a>
+      <a href="regions.html">Regional Analysis</a>
+      <a href="conclusion.html">Conclusion</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <p>This webpage explores the evolving landscape of U.S. foreign aid, examining how resources have been allocated to various regions around the world over time. By delving into datasets made publicly available by the U.S. government, we can trace the shifts in funding priorities, uncovering how political, economic, and global events have influenced the distribution of aid. From the early years of aid allocation to post-Cold War developments, to the current strategic focus on global security, infrastructure, and climate resilience, this investigation highlights the broader trends and underlying factors shaping U.S. foreign policy. The accompanying visualizations offer a closer look at these trends, allowing users to explore the data in more depth and better understand the shifting priorities and impacts of U.S. foreign aid.</p>
+    </section>
+
+    <section>
+      <h2>Visualizations</h2>
+
+      <div class="visualization-container">
+
+        <!-- First Visualization: Updated D3 Chart -->
+        <div class="visualization-row">
+          <div class="chart" id="chart"></div>
+          <div class="chart-description">
+            <div id="dropdown-controls">
+              <label for="regionSelect">Select Region:</label>
+              <select id="regionSelect">
+                <option value="MENA">Middle East and North Africa</option>
+                <option value="SubSaharan">Sub-Saharan Africa</option>
+              </select>
+
+              <label for="timeFrame">Select Time Frame:</label>
+              <select id="timeFrame">
+                <option value="all">All Time</option>
+                <option value="2000-2010">2000-2010</option>
+                <option value="2010-2020">2010-2020</option>
+              </select>
+            </div>
+            <p>This interactive D3 visualization shows trends in U.S. foreign aid allocation to the Middle East & North Africa and Sub-Saharan Africa over time. Use the dropdown menus to filter by region and timeframe. A logarithmic scale helps compare varying levels of aid across decades.</p>
+            <div style="text-align:center; font-size: 0.85em; color: gray; margin-top: 10px;">
+              <em>Note: “Other” includes countries such as Cambodia, Laos, and Fiji.</em>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second Visualization: Iframe -->
+        <div class="visualization-row">
+          <div class="chart" id="viz1">
+            <iframe src="USAID to MENA & SSA (interactive).html"></iframe>
+          </div>
+          <div class="chart-description">
+            <p>This interactive visualization presents how U.S. foreign aid to the Middle East and North Africa (MENA) and Sub-Saharan Africa has evolved over time from 2015 to 2023. It uses side-by-side boxplots to compare the distribution of aid amounts for each fiscal year across the two regions. The logarithmic y-axis enables meaningful comparison despite wide variations in funding values, which span several orders of magnitude. Each boxplot summarizes key statistics including median, quartiles, and extremes allowing users to quickly identify patterns, anomalies, or shifts over time. For example, users can observe fluctuations in aid allocations in response to regional events or policy shifts. The use of color and faceting improves clarity, while tooltips offer deeper insight into specific values and regional trends.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip"></div>
+
+  <!-- Load external script -->
+  <script src="d3_visualization (1).js"></script>
+
+</body>
+</html>

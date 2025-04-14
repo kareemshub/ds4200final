@@ -79,148 +79,123 @@
 
     <!-- Include the D3 Visualization Script -->
     <script>
-        // JavaScript for D3 Visualization
-        d3.csv('us_foreign_aid_country.csv').then(function(data) {
-            // Clean data
-            data.forEach(function(d) {
-                d.Fiscal_Year = +d['Fiscal Year'];
-                d.current_amount = +d['current_amount'];
-            });
+d3.csv('us_foreign_aid_country.csv').then(function(data) {
+    // Convert string values to integers
+    data.forEach(function(d) {
+        d.Fiscal_Year = parseInt(d['Fiscal Year'], 10); 
+        d.current_amount = parseInt(d['current_amount'], 10); 
+    });
 
-            // Remove invalid data
-            data = data.filter(function(d) {
-                return d.Fiscal_Year > 0 && d.current_amount > 0;
-            });
+    // Filter out invalid data
+    data = data.filter(d => d.Fiscal_Year > 0 && d.current_amount > 0);
 
-            // Set up chart dimensions
-            var margin = { top: 50, right: 30, bottom: 50, left: 60 },
-                width = document.querySelector('#d3-chart-container').clientWidth - margin.left - margin.right,
-                height = document.querySelector('#d3-chart-container').clientHeight - margin.top - margin.bottom;
+    // Set margins and dimensions
+    var margin = { top: 50, right: 40, bottom: 50, left: 70 },
+        container = document.getElementById('d3-chart-container'),
+        width = container.clientWidth - margin.left - margin.right,
+        height = container.clientHeight - margin.top - margin.bottom;
 
-            // Create SVG
-            var svg = d3.select("#d3-chart-container")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    // Append SVG
+    var svg = d3.select("#d3-chart-container").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            // Set up scales
-            var x = d3.scaleLinear().range([0, width]);
-            var y = d3.scaleLog().range([height, 0]);
+    // Scales
+    var x = d3.scaleLinear().range([0, width]);
+    var y = d3.scaleLog().range([height, 0]);
 
-            // Create axes
-            var xAxis = svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")");
-            
-            var yAxis = svg.append("g")
-                .attr("class", "y axis");
+    // Axes groups
+    var xAxis = svg.append("g")
+        .attr("transform", "translate(0," + height + ")");
 
-            // Tooltip
-            var tooltip = d3.select("#tooltip");
+    var yAxis = svg.append("g");
 
-            // Update chart function
-            function updateChart() {
-                var selectedRegion = d3.select("#regionSelect").property("value");
-                var selectedTimeFrame = d3.select("#timeFrame").property("value");
+    // Tooltip
+    var tooltip = d3.select("#tooltip");
 
-                // Filter data
-                var filteredData = data.filter(function(d) {
-                    var regionMatch = selectedRegion === 'MENA' ? 
-                        d['Region Name'] === 'Middle East and North Africa' : 
-                        d['Region Name'] === 'Sub-Saharan Africa';
-                    
-                    var yearMatch = selectedTimeFrame === '2000-2010' ? 
-                        d.Fiscal_Year >= 2000 && d.Fiscal_Year <= 2010 : 
-                        d.Fiscal_Year >= 2010 && d.Fiscal_Year <= 2020;
-                    
-                    return regionMatch && yearMatch;
-                });
+    // Update chart
+    function updateChart() {
+        var selectedRegion = d3.select("#regionSelect").property("value");
+        var selectedTimeFrame = d3.select("#timeFrame").property("value");
 
-                // Update scales
-                x.domain(d3.extent(filteredData, function(d) { return d.Fiscal_Year; }));
-                y.domain(d3.extent(filteredData, function(d) { return d.current_amount; }));
+        // Region filtering
+        let filteredData = data.filter(d =>
+            selectedRegion === 'MENA' ? 
+                d['Region Name'] === 'Middle East and North Africa' :
+                d['Region Name'] === 'Sub-Saharan Africa'
+        );
 
-                // Update axes
-                xAxis.transition().duration(500).call(d3.axisBottom(x).tickFormat(d3.format("d")));
-                yAxis.transition().duration(500).call(d3.axisLeft(y));
+        // Time filtering
+        if (selectedTimeFrame === '2000-2010') {
+            filteredData = filteredData.filter(d => d.Fiscal_Year >= 2000 && d.Fiscal_Year <= 2010);
+        } else if (selectedTimeFrame === '2010-2020') {
+            filteredData = filteredData.filter(d => d.Fiscal_Year >= 2010 && d.Fiscal_Year <= 2020);
+        }
 
-                // Bind data
-                var circles = svg.selectAll("circle").data(filteredData);
+        // Update scales
+        x.domain(d3.extent(filteredData, d => d.Fiscal_Year));
+        y.domain(d3.extent(filteredData, d => d.current_amount));
 
-                // Remove old points
-                circles.exit().remove();
+        // Update axes
+        xAxis.transition().duration(500).call(d3.axisBottom(x).tickFormat(d3.format("d")));
+        yAxis.transition().duration(500).call(d3.axisLeft(y));
 
-                // Add new points
-                circles.enter()
-                    .append("circle")
-                    .attr("r", 5)
-                    .style("fill", "#FF6347")
-                    .style("opacity", 0.7)
-                    .on("mouseover", function(event, d) {
-                        d3.select(this).style("fill", "red");
-                        tooltip.html(`${d['Region Name']}<br>${d.Fiscal_Year}: $${d.current_amount.toLocaleString()}`)
-                            .style("left", (event.pageX + 10) + "px")
-                            .style("top", (event.pageY - 28) + "px")
-                            .style("opacity", 1);
-                    })
-                    .on("mouseout", function() {
-                        d3.select(this).style("fill", "#FF6347");
-                        tooltip.style("opacity", 0);
-                    })
-                    .merge(circles)
-                    .transition().duration(500)
-                    .attr("cx", function(d) { return x(d.Fiscal_Year); })
-                    .attr("cy", function(d) { return y(d.current_amount); });
+        // Bind data
+        var circles = svg.selectAll("circle").data(filteredData);
 
-                // Add axis labels
-                svg.select(".x.axis-label").remove();
-                svg.select(".y.axis-label").remove();
-                
-                svg.append("text")
-                    .attr("class", "axis-label")
-                    .attr("x", width / 2)
-                    .attr("y", height + margin.bottom - 10)
-                    .style("text-anchor", "middle")
-                    .text("Fiscal Year");
-                
-                svg.append("text")
-                    .attr("class", "axis-label")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", -margin.left + 15)
-                    .attr("x", -height / 2)
-                    .style("text-anchor", "middle")
-                    .text("Aid Amount (USD)");
-            }
+        circles.exit().remove();
 
-            // Initial render
-            updateChart();
+        circles.enter().append("circle")
+            .attr("r", 5)
+            .style("fill", "#FF6347")
+            .style("opacity", 0.7)
+            .on("mouseover", function(event, d) {
+                d3.select(this).style("fill", "red");
+                tooltip.html(`${d['Region Name']}<br>${d.Fiscal_Year}: $${d.current_amount.toLocaleString()}`)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px")
+                    .style("opacity", 1);
+            })
+            .on("mouseout", function() {
+                d3.select(this).style("fill", "#FF6347");
+                tooltip.style("opacity", 0);
+            })
+            .merge(circles)
+            .transition().duration(500)
+            .attr("cx", d => x(d.Fiscal_Year))
+            .attr("cy", d => y(d.current_amount));
+    }
 
-            // Event listeners
-            d3.select("#regionSelect").on("change", updateChart);
-            d3.select("#timeFrame").on("change", updateChart);
+    // Event listeners
+    d3.select("#regionSelect").on("change", updateChart);
+    d3.select("#timeFrame").on("change", updateChart);
 
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                width = document.querySelector('#d3-chart-container').clientWidth - margin.left - margin.right;
-                height = document.querySelector('#d3-chart-container').clientHeight - margin.top - margin.bottom;
-                
-                svg.attr("width", width + margin.left + margin.right)
-                   .attr("height", height + margin.top + margin.bottom);
-                
-                x.range([0, width]);
-                y.range([height, 0]);
-                
-                updateChart();
-            });
-        }).catch(function(error) {
-            console.error("Error loading the CSV file:", error);
-            d3.select("#d3-chart-container")
-                .append("div")
-                .style("color", "red")
-                .text("Error loading data. Please check console for details.");
-        });
+    // Initial render
+    updateChart();
+
+    // Resize responsiveness
+    window.addEventListener('resize', function () {
+        width = container.clientWidth - margin.left - margin.right;
+        height = container.clientHeight - margin.top - margin.bottom;
+
+        d3.select("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+
+        x.range([0, width]);
+        y.range([height, 0]);
+
+        updateChart();
+    });
+}).catch(function(error) {
+    console.error("Error loading the CSV file:", error);
+    d3.select("#d3-chart-container")
+        .append("div")
+        .style("color", "red")
+        .text("Error loading data. Please check console for details.");
+});
     </script>
 </body>
 </html>
