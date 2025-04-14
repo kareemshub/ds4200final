@@ -17,7 +17,7 @@ d3.csv('us_foreign_aid_country.csv').then(function(data) {
 
     // Chart setup
     var margin = { top: 20, right: 30, bottom: 60, left: 70 },
-        width = 900 - margin.left - margin.right,
+        width = 700 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
     var svg = d3.select("#chart").append("svg")
